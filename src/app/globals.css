@@ -79,6 +79,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -141,4 +142,35 @@
 }
 .scroll-thin::-webkit-scrollbar-thumb:hover {
   background-color: oklch(0.5 0 0);
+}
+
+/* Superfícies do navegador tematizadas: seleção, caret e scrollbar da página
+   seguem a paleta emerald/zinc em vez dos defaults do browser */
+::selection {
+  background-color: oklch(0.696 0.17 162.48 / 0.35);
+}
+
+input,
+textarea {
+  caret-color: oklch(0.696 0.17 162.48);
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.32 0 0) transparent;
+}
+html::-webkit-scrollbar {
+  width: 10px;
+}
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+html::-webkit-scrollbar-thumb {
+  background-color: oklch(0.3 0 0);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+html::-webkit-scrollbar-thumb:hover {
+  background-color: oklch(0.45 0 0);
 }

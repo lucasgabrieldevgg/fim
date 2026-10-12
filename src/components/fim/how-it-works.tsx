@@ -82,7 +82,7 @@ export function HowItWorks({ navigate }: { navigate: (to: string) => void }) {
                 <p className="font-medium text-zinc-100">O servidor registra e repassa</p>
                 <p className="text-sm text-zinc-400">
                   O aviso fica no histórico do app e é repassado para o ntfy.sh, um
-                  serviço gratuito e open-source de notificações push — é ele quem leva o
+                  serviço gratuito e open-source de notificações push. É ele quem leva o
                   aviso para a sua aba e para o seu celular.
                 </p>
               </div>
@@ -122,7 +122,7 @@ export function HowItWorks({ navigate }: { navigate: (to: string) => void }) {
             >
               ntfy.sh
             </a>
-            , que já tem aplicativo oficial Android — de graça, sem anúncios e sem
+            , que já tem aplicativo oficial Android: de graça, sem anúncios e sem
             cadastro. É o caminho mais direto para receber os avisos no bolso:
           </p>
           <ol className="list-decimal space-y-1.5 pl-5">
@@ -209,7 +209,7 @@ export function HowItWorks({ navigate }: { navigate: (to: string) => void }) {
           </p>
           <p>
             Se você fechar a aba, o celular (via app ntfy) continua recebendo os pushes
-            normalmente — por isso recomendamos configurar os dois.
+            normalmente. Por isso recomendamos configurar os dois.
           </p>
         </CardContent>
       </Card>
@@ -233,7 +233,7 @@ export function HowItWorks({ navigate }: { navigate: (to: string) => void }) {
             >
               Vercel
             </a>{" "}
-            — o plano gratuito dá conta. Configure a variável{" "}
+            (o plano gratuito dá conta). Configure a variável{" "}
             <code className="font-mono text-zinc-300">DATABASE_URL</code> apontando para
             um arquivo (ou troque o Prisma por um banco hospedado como Turso/Neon para
             histórico durável).
@@ -241,7 +241,7 @@ export function HowItWorks({ navigate }: { navigate: (to: string) => void }) {
           <p>
             No GitHub Pages (apenas estático), a página de instruções e o painel
             funcionam, mas o endpoint <code className="font-mono text-zinc-300">/api/notify</code>{" "}
-            não existe — nesse cenário, use a alternativa direta para o ntfy.sh que está
+            não existe. Nesse cenário, use a alternativa direta para o ntfy.sh que está
             nas instruções do agente, e o painel continua recebendo tudo em tempo real
             via SSE.
           </p>
@@ -284,7 +284,7 @@ export function HowItWorks({ navigate }: { navigate: (to: string) => void }) {
         <CardContent className="space-y-3 text-sm text-zinc-400">
           <p>
             Não há login nem coleta de dados pessoais: só o código do canal, o título e
-            a mensagem do aviso. O código é a chave — quem o tiver pode enviar avisos
+            a mensagem do aviso. O código é a chave: quem o tiver pode enviar avisos
             para você, então trate-o como senha e prefira os gerados automaticamente.
           </p>
           <Separator className="bg-zinc-800" />

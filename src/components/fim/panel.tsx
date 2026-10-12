@@ -63,6 +63,21 @@ type WakeLockApi = { request: (type: "screen") => Promise<WakeLockSentinelLike> 
 const historyKey = (code: string) => `fim-hist-${code}`
 const SOUND_KEY = "fim-sound"
 
+// Ritmos do painel: verificação alternativa, teto do alarme e limites de histórico
+const POLL_INTERVAL_MS = 5000
+const ALARM_AUTOSTOP_MS = 120_000
+// O mesmo aviso chega pelo SSE (~1 s) e pelo polling (até 5 s): a assinatura
+// título+mensagem compara a HORA DA MENSAGEM, não o momento da chegada — assim a
+// duplicação entre canais é filtrada (mesma msg tem at quase igual) e avisos
+// legítimos repetidos (at novo) continuam passando.
+const SIG_WINDOW_MS = 30_000
+const SIG_MAP_MAX = 300
+const SIG_PRUNE_MS = 600_000
+const HISTORY_CAP = 50
+const LOCAL_HISTORY_CAP = 30
+const SEED_LIMIT = 20
+const POLL_LIMIT = 15
+
 function relativeTime(at: number): string {
   const diff = Date.now() - at
   if (diff < 15_000) return "agora"
@@ -98,15 +113,15 @@ export function Panel({ code }: { code: string }) {
     code
   )
 
-  // ------- dedupe -------
-  const isDup = useCallback((key: string, sig: string) => {
+  // Dedupe por id (canal ntfy vs banco) e por assinatura título+mensagem+hora
+  const isDup = useCallback((key: string, sig: string, at: number) => {
     if (seenKeysRef.current.has(key)) return true
-    const last = seenSigsRef.current.get(sig)
-    if (last && Date.now() - last < 90_000) return true
+    const lastAt = seenSigsRef.current.get(sig)
+    if (lastAt !== undefined && Math.abs(at - lastAt) < SIG_WINDOW_MS) return true
     seenKeysRef.current.add(key)
-    seenSigsRef.current.set(sig, Date.now())
-    if (seenSigsRef.current.size > 300) {
-      const cutoff = Date.now() - 600_000
+    seenSigsRef.current.set(sig, at)
+    if (seenSigsRef.current.size > SIG_MAP_MAX) {
+      const cutoff = Date.now() - SIG_PRUNE_MS
       for (const [s, t] of seenSigsRef.current) {
         if (t < cutoff) seenSigsRef.current.delete(s)
       }
@@ -114,7 +129,6 @@ export function Panel({ code }: { code: string }) {
     return false
   }, [])
 
-  // ------- efeitos de alerta -------
   const fireEffects = useCallback((title: string, message: string) => {
     // 1) notificação do sistema
     try {
@@ -138,7 +152,7 @@ export function Panel({ code }: { code: string }) {
       engineRef.current?.startAlarm()
       setRinging(true)
       if (autoStopRef.current) clearTimeout(autoStopRef.current)
-      autoStopRef.current = setTimeout(() => setRinging(false), 120_000)
+      autoStopRef.current = setTimeout(() => setRinging(false), ALARM_AUTOSTOP_MS)
     }
   }, [])
 
@@ -151,12 +165,11 @@ export function Panel({ code }: { code: string }) {
     }
   }, [])
 
-  // ------- ingestão de avisos -------
   const ingest = useCallback(
     (item: Item, live: boolean) => {
       const sig = `${item.title}||${item.message}`
-      if (isDup(item.key, sig)) return
-      setItems((prev) => [item, ...prev].slice(0, 50))
+      if (isDup(item.key, sig, item.at)) return
+      setItems((prev) => [item, ...prev].slice(0, HISTORY_CAP))
       setCurrent(item)
       if (live && item.at >= mountedAtRef.current) {
         fireEffects(item.title, item.message)
@@ -165,7 +178,6 @@ export function Panel({ code }: { code: string }) {
     [fireEffects, isDup]
   )
 
-  // ------- montagem: seed + SSE + polling -------
   useEffect(() => {
     mountedAtRef.current = Date.now()
     seenKeysRef.current = new Set()
@@ -179,9 +191,11 @@ export function Panel({ code }: { code: string }) {
         setSoundMode(saved)
         soundModeRef.current = saved
       }
-      const local = JSON.parse(localStorage.getItem(historyKey(code)) ?? "[]") as Item[]
-      if (Array.isArray(local)) {
-        for (const it of local) {
+      const savedLocally = JSON.parse(
+        localStorage.getItem(historyKey(code)) ?? "[]"
+      ) as Item[]
+      if (Array.isArray(savedLocally)) {
+        for (const it of savedLocally) {
           const sig = `${it.title}||${it.message}`
           if (isDup(it.key, sig)) continue
           setItems((prev) => [...prev, it])
@@ -191,33 +205,39 @@ export function Panel({ code }: { code: string }) {
       /* localStorage indisponível */
     }
 
-    // seed do servidor (mantém ordem: mais recente primeiro)
-    fetch(`/api/history?code=${encodeURIComponent(code)}&limit=20`, { cache: "no-store" })
+    // seed do servidor (mais antigo primeiro para o mais novo ficar no topo)
+    fetch(`/api/history?code=${encodeURIComponent(code)}&limit=${SEED_LIMIT}`, {
+      cache: "no-store",
+    })
       .then((r) => r.json())
-      .then((j) => {
-        if (!j?.ok || !Array.isArray(j.items)) return
-        for (const raw of [...j.items].reverse()) {
-          const at = Date.parse(raw.createdAt)
+      .then((payload) => {
+        if (!payload?.ok || !Array.isArray(payload.items)) return
+        for (const row of [...payload.items].reverse()) {
+          const at = Date.parse(row.createdAt)
           ingest(
-            { key: `db:${raw.id}`, title: raw.title, message: raw.message, at },
+            { key: `db:${row.id}`, title: row.title, message: row.message, at },
             false
           )
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        /* sem seed agora: o polling preenche a lista em segundos */
+      })
 
-    // registra o código (melhor esforço)
+    // registra o código para o painel saber que o canal existe
     fetch("/api/codes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code }),
-    }).catch(() => {})
+    }).catch(() => {
+      /* melhor esforço: o canal funciona mesmo sem registro local */
+    })
 
     // desbloqueia áudio no primeiro clique
     const unlock = () => engineRef.current?.unlock()
     window.addEventListener("pointerdown", unlock, { once: true })
 
-    // SSE em tempo real (ntfy.sh — com CORS liberado)
+    // SSE em tempo real no ntfy.sh (CORS liberado no servidor deles)
     let cancelled = false
     const connectSSE = () => {
       if (cancelled) return
@@ -231,25 +251,25 @@ export function Panel({ code }: { code: string }) {
         }
         es.onmessage = (ev) => {
           try {
-            const d = JSON.parse(ev.data) as {
+            const ntfyEvent = JSON.parse(ev.data) as {
               id?: string
               event?: string
               title?: string
               message?: string
               time?: number
             }
-            if (d.event !== "message") return
+            if (ntfyEvent.event !== "message") return
             ingest(
               {
-                key: `ntfy:${d.id ?? `${d.time}-${d.title}`}`,
-                title: d.title || "Tarefa concluída",
-                message: d.message || "",
-                at: (d.time ?? Math.floor(Date.now() / 1000)) * 1000,
+                key: `ntfy:${ntfyEvent.id ?? `${ntfyEvent.time}-${ntfyEvent.title}`}`,
+                title: ntfyEvent.title || "Tarefa concluída",
+                message: ntfyEvent.message || "",
+                at: (ntfyEvent.time ?? Math.floor(Date.now() / 1000)) * 1000,
               },
               true
             )
           } catch {
-            /* linha inválida */
+            /* linha keepalive ou payload parcial: ignorar */
           }
         }
       } catch {
@@ -261,15 +281,16 @@ export function Panel({ code }: { code: string }) {
     // polling no nosso banco (caminho principal, independe do ntfy)
     const poll = async () => {
       try {
-        const r = await fetch(`/api/history?code=${encodeURIComponent(code)}&limit=15`, {
-          cache: "no-store",
-        })
-        const j = await r.json()
-        if (j?.ok && Array.isArray(j.items)) {
-          for (const raw of [...j.items].reverse()) {
-            const at = Date.parse(raw.createdAt)
+        const r = await fetch(
+          `/api/history?code=${encodeURIComponent(code)}&limit=${POLL_LIMIT}`,
+          { cache: "no-store" }
+        )
+        const payload = await r.json()
+        if (payload?.ok && Array.isArray(payload.items)) {
+          for (const row of [...payload.items].reverse()) {
+            const at = Date.parse(row.createdAt)
             ingest(
-              { key: `db:${raw.id}`, title: raw.title, message: raw.message, at },
+              { key: `db:${row.id}`, title: row.title, message: row.message, at },
               true
             )
           }
@@ -280,7 +301,7 @@ export function Panel({ code }: { code: string }) {
       }
     }
     void poll()
-    pollTimerRef.current = setInterval(poll, 5000)
+    pollTimerRef.current = setInterval(poll, POLL_INTERVAL_MS)
 
     if (typeof Notification !== "undefined") {
       setPermission(Notification.permission)
@@ -300,16 +321,17 @@ export function Panel({ code }: { code: string }) {
     }
   }, [code])
 
-  // ------- persistência do histórico local -------
   useEffect(() => {
     try {
-      localStorage.setItem(historyKey(code), JSON.stringify(items.slice(0, 30)))
+      localStorage.setItem(
+        historyKey(code),
+        JSON.stringify(items.slice(0, LOCAL_HISTORY_CAP))
+      )
     } catch {
-      /* sem espaço */
+      /* armazenamento cheio ou bloqueado: o painel segue funcionando em memória */
     }
   }, [items, code])
 
-  // ------- pisca o título da aba enquanto o alarme toca -------
   useEffect(() => {
     if (ringing) {
       const original = document.title
@@ -325,7 +347,6 @@ export function Panel({ code }: { code: string }) {
     }
   }, [ringing])
 
-  // ------- wake lock -------
   useEffect(() => {
     const nav = navigator as Navigator & { wakeLock?: WakeLockApi }
     const sync = async () => {
@@ -335,7 +356,7 @@ export function Panel({ code }: { code: string }) {
           try {
             wakeLockRef.current = await nav.wakeLock.request("screen")
           } catch {
-            /* negado */
+            /* usuário ou navegador recusou; a tela pode apagar normalmente */
           }
         }
       } else if (!wakeLockOn && wakeLockRef.current && !wakeLockRef.current.released) {
@@ -349,7 +370,6 @@ export function Panel({ code }: { code: string }) {
     return () => document.removeEventListener("visibilitychange", onVis)
   }, [wakeLockOn])
 
-  // ------- ações -------
   const askPermission = async () => {
     if (typeof Notification === "undefined") {
       toast.error("Este navegador não suporta notificações do sistema.")
@@ -367,7 +387,9 @@ export function Panel({ code }: { code: string }) {
     soundModeRef.current = mode
     try {
       localStorage.setItem(SOUND_KEY, mode)
-    } catch {}
+    } catch {
+      /* preferência de som é opcional */
+    }
     engineRef.current?.unlock()
     if (mode === "ding") engineRef.current?.ding()
     if (mode === "mudo") stopRinging()
@@ -387,15 +409,15 @@ export function Panel({ code }: { code: string }) {
             "Se voce recebeu este aviso, o canal esta funcionando. Pode passar as instrucoes para o seu agente de IA.",
         }),
       })
-      const j = await r.json()
-      if (j?.ok) {
+      const resultado = await r.json()
+      if (resultado?.ok) {
         toast.success(
-          j.relayed
+          resultado.relayed
             ? "Teste enviado! Push no ntfy.sh OK e aviso no painel em instantes."
             : "Teste registrado! O painel vai tocar em alguns segundos (polling)."
         )
       } else {
-        toast.error(j?.error ?? "Falha no teste")
+        toast.error(resultado?.error ?? "Falha no teste")
       }
     } catch {
       toast.error("Falha de rede no teste")
@@ -410,7 +432,11 @@ export function Panel({ code }: { code: string }) {
     try {
       localStorage.removeItem(historyKey(code))
     } catch {}
-    fetch(`/api/history?code=${encodeURIComponent(code)}`, { method: "DELETE" }).catch(() => {})
+    fetch(`/api/history?code=${encodeURIComponent(code)}`, {
+      method: "DELETE",
+    }).catch(() => {
+      /* o histórico local já foi limpo; o do servidor pode permanecer */
+    })
     toast.success("Histórico limpo")
   }
 
@@ -418,7 +444,7 @@ export function Panel({ code }: { code: string }) {
     status === "tempo-real" ? (
       <Badge className="gap-1.5 border-emerald-500/30 bg-emerald-500/10 text-emerald-400" variant="outline">
         <span className="relative flex size-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75 motion-reduce:animate-none" />
           <span className="relative inline-flex size-2 rounded-full bg-emerald-400" />
         </span>
         Tempo real
@@ -430,7 +456,7 @@ export function Panel({ code }: { code: string }) {
       </Badge>
     ) : (
       <Badge className="gap-1.5 border-zinc-700 bg-zinc-800 text-zinc-400" variant="outline">
-        <Loader2 className="size-3 animate-spin" />
+        <Loader2 className="size-3 motion-safe:animate-spin" />
         Conectando...
       </Badge>
     )
@@ -495,7 +521,11 @@ export function Panel({ code }: { code: string }) {
             <span className="text-sm text-zinc-400">Manter tela ligada</span>
           </div>
           <Button onClick={sendTest} disabled={testing} className="ml-auto bg-emerald-600 hover:bg-emerald-500">
-            {testing ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
+            {testing ? (
+              <Loader2 className="size-4 motion-safe:animate-spin" />
+            ) : (
+              <Send className="size-4" />
+            )}
             Testar agora
           </Button>
         </CardContent>
@@ -505,7 +535,7 @@ export function Panel({ code }: { code: string }) {
       <Card
         className={
           ringing
-            ? "border-red-500 animate-pulse bg-red-950/30"
+            ? "border-red-500 motion-safe:animate-pulse bg-red-950/30"
             : "border-zinc-800 bg-zinc-900/60"
         }
       >
@@ -523,7 +553,9 @@ export function Panel({ code }: { code: string }) {
               {current.message && (
                 <p className="text-zinc-300">{current.message}</p>
               )}
-              <p className="text-xs text-zinc-500">{relativeTime(current.at)}</p>
+              <p className="text-xs tabular-nums text-zinc-500">
+                {relativeTime(current.at)}
+              </p>
               {ringing && (
                 <Button
                   size="lg"
@@ -539,7 +571,7 @@ export function Panel({ code }: { code: string }) {
             <div className="flex items-center gap-3 py-4 text-zinc-500">
               <CircleDashed className="size-5" />
               <p>
-                Nenhum aviso ainda. Deixe esta aba aberta — quando seu agente terminar a
+                Nenhum aviso ainda. Deixe esta aba aberta: quando seu agente terminar a
                 tarefa, o aviso aparece aqui.
               </p>
             </div>
@@ -624,7 +656,7 @@ export function Panel({ code }: { code: string }) {
                         <p className="mt-0.5 text-sm text-zinc-400">{it.message}</p>
                       )}
                     </div>
-                    <span className="shrink-0 text-xs text-zinc-500">
+                    <span className="shrink-0 text-xs tabular-nums text-zinc-500">
                       {relativeTime(it.at)}
                     </span>
                   </div>
@@ -635,7 +667,7 @@ export function Panel({ code }: { code: string }) {
         </CardContent>
       </Card>
 
-      <p className="text-center text-xs text-zinc-600">
+      <p className="text-center text-xs text-zinc-500">
         Dica: gere um código novo em{' '}
         <button
           className="underline hover:text-zinc-400"

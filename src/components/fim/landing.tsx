@@ -95,7 +95,7 @@ export function Landing({ navigate }: { navigate: (to: string) => void }) {
         <p className="mx-auto mt-4 max-w-2xl text-pretty text-lg text-zinc-400">
           Deixe esta aba aberta, passe as instruções para o seu agente e vá fazer outra
           coisa. Quando a tarefa acabar, o agente envia uma requisição REST e o app toca
-          o aviso na hora — com título definido pela própria IA e, se você quiser, um
+          o aviso na hora, com título definido pela própria IA e, se você quiser, um
           alarme sonoro.
         </p>
       </div>
@@ -108,7 +108,7 @@ export function Landing({ navigate }: { navigate: (to: string) => void }) {
             Crie ou abra seu canal
           </CardTitle>
           <CardDescription>
-            O código é o nome do seu canal de avisos — e também a sua chave secreta.
+            O código é o nome do seu canal de avisos e também a sua chave secreta.
             Quem tiver o código consegue enviar avisos para você, então prefira o código
             gerado automaticamente.
           </CardDescription>
@@ -158,53 +158,41 @@ export function Landing({ navigate }: { navigate: (to: string) => void }) {
       </Card>
 
       {/* Passos */}
-      <div className="mt-10 grid gap-4 sm:grid-cols-3">
-        <Card className="border-zinc-800 bg-zinc-900/40">
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-3">
-              <span className="flex size-8 items-center justify-center rounded-lg bg-emerald-950 font-bold text-emerald-400">
-                1
-              </span>
-              <CardTitle className="text-base">Abra o painel</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="text-sm text-zinc-400">
-            Gere seu código e deixe a aba do painel aberta. Ative notificações do sistema
-            e escolha ding ou alarme sonoro. Pode fechar os olhos que a gente grita por
-            você.
-          </CardContent>
-        </Card>
-        <Card className="border-zinc-800 bg-zinc-900/40">
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-3">
-              <span className="flex size-8 items-center justify-center rounded-lg bg-emerald-950 font-bold text-emerald-400">
-                2
-              </span>
-              <CardTitle className="text-base">Configure o agente</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="text-sm text-zinc-400">
+      <ol className="relative mt-12 space-y-10 border-l border-zinc-800 pl-8">
+        <li className="relative">
+          <span className="absolute -left-[41px] flex size-8 items-center justify-center rounded-full border border-emerald-800 bg-zinc-950 text-sm font-bold text-emerald-400">
+            1
+          </span>
+          <h3 className="text-lg font-semibold text-zinc-100">Abra o painel</h3>
+          <p className="mt-1 text-sm leading-relaxed text-zinc-400">
+            Gere seu código e deixe a aba do painel aberta. Ative as notificações do
+            sistema e escolha entre o ding curto e o alarme contínuo. Pode fechar os
+            olhos que a gente grita por você.
+          </p>
+        </li>
+        <li className="relative">
+          <span className="absolute -left-[41px] flex size-8 items-center justify-center rounded-full border border-emerald-800 bg-zinc-950 text-sm font-bold text-emerald-400">
+            2
+          </span>
+          <h3 className="text-lg font-semibold text-zinc-100">Configure o agente</h3>
+          <p className="mt-1 text-sm leading-relaxed text-zinc-400">
             Copie as instruções prontas e cole nas regras do seu agente (Claude, Cursor,
             etc.). Elas mandam a IA enviar um POST REST simples como última ação da
             tarefa, com o título que ela quiser.
-          </CardContent>
-        </Card>
-        <Card className="border-zinc-800 bg-zinc-900/40">
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-3">
-              <span className="flex size-8 items-center justify-center rounded-lg bg-emerald-950 font-bold text-emerald-400">
-                3
-              </span>
-              <CardTitle className="text-base">Receba o aviso</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="text-sm text-zinc-400">
+          </p>
+        </li>
+        <li className="relative">
+          <span className="absolute -left-[41px] flex size-8 items-center justify-center rounded-full border border-emerald-800 bg-zinc-950 text-sm font-bold text-emerald-400">
+            3
+          </span>
+          <h3 className="text-lg font-semibold text-zinc-100">Receba o aviso</h3>
+          <p className="mt-1 text-sm leading-relaxed text-zinc-400">
             A IA termina, a requisição sai, o painel notifica na hora e toca o alarme (se
             ativado). Com o app ntfy no celular, você recebe push mesmo longe do
             computador.
-          </CardContent>
-        </Card>
-      </div>
+          </p>
+        </li>
+      </ol>
 
       {/* Selos */}
       <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-zinc-500">
