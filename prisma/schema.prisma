@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Códigos (tópicos) criados pelos usuários. O código funciona como chave secreta:
+// quem o possui pode enviar avisos e (via ntfy) recebê-los.
+model Code {
+  code      String   @id
+  createdAt DateTime @default(now())
+}
+
+// Histórico de avisos enviados pelos agentes de IA.
+model Notification {
+  id        String   @id @default(cuid())
+  code      String
+  title     String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([code, createdAt])
+}
