@@ -110,3 +110,20 @@ Work Log:
 
 Stage Summary:
 - APK baixável publicamente via GitHub Release; também disponível em download/fim.apk na sandbox
+
+---
+Task ID: 7
+Agent: Super Z (main agent)
+Task: Esclarecer keystore + direcionar site e README do Fim! para o APK
+
+Work Log:
+- Esclareceu ao usuário: senha do keystore é só do dev (assinatura de atualização), usuários não precisam de senha
+- how-it-works.tsx: card "Receber no celular" agora oferece o APK do Fim! (releases/latest) como caminho principal, ntfy oficial como alternativa; card de "APK com a minha marca" atualizado (o Fim! Android já existe, com fork documentado)
+- README.md: seção Instalar no celular com Fim! Android primeiro
+- eslint.config.mjs: apk-build/** nos ignores (upstream ntfy poluía o lint)
+- Deploy Vercel falhava com OOM (exit 137): CLI empacotava apk-build/ (2GB+); resolvido com apk-build no .vercelignore
+- Redeploy OK: fim-flax.vercel.app servindo links do APK; commit 819aceb..7626f31 pushado no GitHub
+
+Stage Summary:
+- Site e README direcionam para github.com/lucasgabrieldevgg/fim-android/releases
+- APK público: releases/download/v1.25.2-fim.1/fim.apk
