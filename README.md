@@ -78,7 +78,7 @@ Rate limit: 30 avisos por minuto por código. Resposta: `{ok, saved, relayed, wa
 
 ## Instalar no celular
 
-- **Fim! Android (APK próprio)**: baixe em [GitHub Releases](https://github.com/lucasgabrieldevgg/fim-android/releases/latest) — fork do app ntfy (Apache 2.0), com nossa marca e push em segundo plano sem Google services. Código-fonte: [lucasgabrieldevgg/fim-android](https://github.com/lucasgabrieldevgg/fim-android).
+- **Fim! Android 2.0 (app próprio)**: baixe em [GitHub Releases](https://github.com/lucasgabrieldevgg/fim-app/releases/latest) — app enxuto feito para o Fim! (~5 MB, sem Google services): cola o código, escuta, avisa na hora. ⚠️ O Google Play Protect pode avisar que o app é "nocivo" — **falso positivo** comum em APKs fora da Play Store; toque em "Instalar mesmo assim" e, se quiser, peça pro seu agente de IA [auditar o código aberto](https://github.com/lucasgabrieldevgg/fim-app). Código-fonte: [lucasgabrieldevgg/fim-app](https://github.com/lucasgabrieldevgg/fim-app). (A versão 1.x — fork do app ntfy — segue disponível em [fim-android](https://github.com/lucasgabrieldevgg/fim-android).)
 - **App ntfy oficial** (alternativa): Play Store, F-Droid ou APK do [repositório ntfy](https://github.com/binwiederhier/ntfy-android/releases) — inscreva-se no tópico do seu código e receba o push.
 - **PWA**: abra o painel no navegador do celular e use "Adicionar à tela inicial".
 

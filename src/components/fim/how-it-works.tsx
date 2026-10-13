@@ -108,46 +108,63 @@ export function HowItWorks({ navigate }: { navigate: (to: string) => void }) {
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <Smartphone className="size-5 text-emerald-400" />
-            Receber no celular (APK do Fim!)
+            Receber no celular (app Fim!)
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-zinc-400">
           <p>
-            O Fim! tem app Android próprio: um fork nosso do app oficial do ntfy
-            (Apache 2.0, créditos mantidos no repositório). Mesmo motor de push, mesma
-            simplicidade, com a nossa marca:
+            O Fim! tem app Android próprio, enxuto e feito pra este fluxo: cola o
+            código, escuta, avisa na hora — com o app fechado e a tela apagada.
+            Cerca de 5 MB, sem Google services, sem configuração além do código.
           </p>
           <ol className="list-decimal space-y-1.5 pl-5">
             <li>
               Baixe o APK:{" "}
               <a
-                href="https://github.com/lucasgabrieldevgg/fim-android/releases/latest"
+                href="https://github.com/lucasgabrieldevgg/fim-app/releases/latest"
                 target="_blank"
                 rel="noreferrer"
                 className="text-emerald-400 underline underline-offset-2"
               >
                 Fim! Android (GitHub Releases)
               </a>
-              . O código-fonte do fork é público:{" "}
+              . O código-fonte é público:{" "}
               <a
-                href="https://github.com/lucasgabrieldevgg/fim-android"
+                href="https://github.com/lucasgabrieldevgg/fim-app"
                 target="_blank"
                 rel="noreferrer"
                 className="text-emerald-400 underline underline-offset-2"
               >
-                lucasgabrieldevgg/fim-android
+                lucasgabrieldevgg/fim-app
               </a>
               .
             </li>
             <li>
-              Instale (o Android pede permissão para apps desconhecidos — normal fora da
-              Play), toque em <span className="text-zinc-200">Inscrever-se</span> e digite
-              o seu código do Fim! (ex.:{" "}
-              <code className="font-mono text-emerald-400">fim-x7k92mq8ab</code>).
+              Instale.{" "}
+              <span className="text-amber-400">
+                O Google Play Protect pode avisar que o app é &quot;desconhecido&quot; ou
+                &quot;nocivo&quot;
+              </span>{" "}
+              — é um <span className="text-zinc-200">falso positivo</span>, padrão para
+              qualquer APK fora da Play Store. Toque em{" "}
+              <span className="text-zinc-200">Mais detalhes → Instalar mesmo assim</span>.
+              O app não coleta nada (só escuta o seu código no ntfy.sh) — e, se quiser,
+              peça pro seu agente de IA{" "}
+              <a
+                href="https://github.com/lucasgabrieldevgg/fim-app#-sobre-o-aviso-do-play-protect"
+                target="_blank"
+                rel="noreferrer"
+                className="text-emerald-400 underline underline-offset-2"
+              >
+                auditar o código aberto
+              </a>{" "}
+              antes de instalar.
             </li>
             <li>
-              Pronto: cada aviso que a IA enviar aparece como push no seu celular, com o
-              título que ela escolheu — mesmo com o app fechado.
+              Cole o seu código do Fim! (ex.:{" "}
+              <code className="font-mono text-emerald-400">fim-x7k92mq8ab</code>) e toque
+              em <span className="text-zinc-200">Começar a escutar</span>. Cada aviso que
+              a IA enviar chega como push no celular, com o título que ela escolheu.
             </li>
           </ol>
           <p>
