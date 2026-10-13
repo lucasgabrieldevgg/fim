@@ -61,3 +61,4 @@ server.log
 .vercel
 dev.log
 server.log
+apk-build/

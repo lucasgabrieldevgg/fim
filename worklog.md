@@ -77,3 +77,23 @@ Stage Summary:
 - App no ar: https://fim-flax.vercel.app | Código: https://github.com/lucasgabrieldevgg/fim
 - Push no celular via ntfy.sh confirmado funcionando a partir da Vercel
 - Pendente p/ usuário: instalar Vercel GitHub App p/ auto-deploy + ROTACIONAR os 2 tokens (escopos amplos demais)
+
+---
+Task ID: 5
+Agent: Super Z (main agent)
+Task: Fork do ntfy-android rebrandado como Fim! + APK assinado
+
+Work Log:
+- Descobriu que o app Android é repo separado: binwiederhier/ntfy-android (Apache 2.0), 9.7MB shallow
+- SDK Android 36 instalado em apk-build/ (sem root: cmdline-tools + licenses aceitas); Gradle 9.2.1 manual; JDK Temurin 21 portátil (sandbox só tem JRE, sem sudo) via ~/.gradle/gradle.properties org.gradle.java.home
+- Sandbox mata processos entre tool calls -> build em chunks de 600s (caches do Gradle persistem; ~4 chamadas até BUILD SUCCESSFUL)
+- Rebrand: app_name -> Fim!, applicationId gg.lucasgabrieldevgg.fim (side-by-side com ntfy oficial), versionName 1.25.2-fim.1, ícones adaptativos gerados com sharp (fundo verde #16A34A + "!" branca), monochrome vector novo, FIM_FORK.md com créditos e §4(b)
+- Flavor fdroid (sem Firebase, push por WebSocket em background); APK alinhado (zipalign) e assinado com keystore próprio (fim.keystore, senha em download/fim-keystore-senha.txt)
+- Fork API: lucasgabrieldevgg/fim-android (renomeado), branch fim com o commit do rebrand
+- aapt2 badging confirmou: package gg.lucasgabrieldevgg.fim, label Fim!, sdk 36
+
+Stage Summary:
+- APK entregue: download/fim.apk (9,3MB, assinado, fdroid flavor)
+- Fork público com créditos: github.com/lucasgabrieldevgg/fim-android (branch fim)
+- Keystore + senha preservados para updates futuros (mesma chave = mesma assinatura)
+- Build reproduzível: apk-build/ com SDK+Gradle+JDK e scripts/gen-apk-icons.mjs
