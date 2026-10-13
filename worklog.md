@@ -56,3 +56,24 @@ Work Log:
 Stage Summary:
 - Nada a mudar no Fim!: o app já passou pelo gate do craftsmanship; a nova referência é catálogo de fontes para tarefas futuras ("ache componentes que posso copiar")
 - Opinião entregue: adição responsável (licenças datadas, "pointers not merges", teto de 5 links, provenance obrigatória)
+
+---
+Task ID: 4
+Agent: Super Z (main agent)
+Task: Deploy do Fim! no GitHub + Vercel com tokens fornecidos pelo usuário
+
+Work Log:
+- Validou tokens (GitHub: lucasgabrieldevgg; Vercel: hobby, team lukepalys-projects)
+- Adaptou app p/ serverless: src/lib/db-init.ts com ensureSchema() memoizado (CREATE TABLE IF NOT EXISTS via $executeRawUnsafe, com retry) chamado em notify/history/codes — banco se auto-cria no /tmp efêmero da Vercel
+- Higiene de repo: des-trackeou .env, db/custom.db, download/*; .gitignore + .vercelignore novos; README com repo real
+- GitHub: criou repo lucasgabrieldevgg/fim (público) e pushou main
+- Vercel: criou projeto "fim" via API + DATABASE_URL=file:/tmp/fim.db (prod/preview/dev); corrigiu link local (.vercel/project.json com id real prj_mBT4...); deploy --prod OK -> https://fim-flax.vercel.app
+- Corrigiu 2 problemas: CLI havia deployado em projeto acidental "my-project" (id do usuário extraído por engano; deletado via API) e Deployment Protection ligada (desativada via PATCH ssoProtection:null)
+- Smoke test produção: GET / 200; POST /api/notify -> {ok,saved:true,relayed:true} (schema bootstrap + relay ntfy funcionando sem 429); GET /api/history retorna o aviso
+- vercel git connect falhou (App da Vercel não instalado no GitHub) — instrução do clique no dashboard passada ao usuário
+- fim.vercel.app pertence a outro team — alias oficial é fim-flax.vercel.app
+
+Stage Summary:
+- App no ar: https://fim-flax.vercel.app | Código: https://github.com/lucasgabrieldevgg/fim
+- Push no celular via ntfy.sh confirmado funcionando a partir da Vercel
+- Pendente p/ usuário: instalar Vercel GitHub App p/ auto-deploy + ROTACIONAR os 2 tokens (escopos amplos demais)
