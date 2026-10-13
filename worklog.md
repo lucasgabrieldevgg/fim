@@ -97,3 +97,16 @@ Stage Summary:
 - Fork público com créditos: github.com/lucasgabrieldevgg/fim-android (branch fim)
 - Keystore + senha preservados para updates futuros (mesma chave = mesma assinatura)
 - Build reproduzível: apk-build/ com SDK+Gradle+JDK e scripts/gen-apk-icons.mjs
+
+---
+Task ID: 6
+Agent: Super Z (main agent)
+Task: Disponibilizar download do APK
+
+Work Log:
+- Criou GitHub Release v1.25.2-fim.1 no fork (branch fim) com notas de instalação e créditos
+- Upload do fim.apk (9,3MB) como asset — HTTP 201, state uploaded
+- Link público: github.com/lucasgabrieldevgg/fim-android/releases/download/v1.25.2-fim.1/fim.apk
+
+Stage Summary:
+- APK baixável publicamente via GitHub Release; também disponível em download/fim.apk na sandbox
