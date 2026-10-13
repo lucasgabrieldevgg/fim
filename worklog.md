@@ -24,3 +24,21 @@ Stage Summary:
 - Arquivos-chave: src/app/page.tsx (shell + hash router), src/components/fim/{landing,panel,agent-instructions,how-it-works,copy-button}.tsx, src/lib/{fim-shared,audio}.ts, src/hooks/use-hash-route.ts, prisma/schema.prisma, public/manifest.webmanifest
 - Nota: IP compartilhado do sandbox estoura cota diária do ntfy.sh (429) — relay trata com warning e o painel avisa mesmo assim via polling; em deploy próprio (Vercel) ou envio direto do agente ao ntfy.sh o push no celular funciona normalmente
 - Skill do usuário (theskill) aplicada no polimento, conforme pedido; repositório clonado em /tmp/theskill
+
+---
+Task ID: 2
+Agent: Super Z (main agent)
+Task: Preparar deploy (Vercel/GitHub Pages) + reavaliar a skill theskill do usuário
+
+Work Log:
+- Re-leu o repo lucasgabrieldevgg/theskill (meta-skill roteadora com 7 sub-skills; craftsmanship é o destaque) para dar opinião fundamentada
+- Validou build de produção (bun run build): compilou sem erros, rotas /, /api/notify, /api/history, /api/codes
+- Adicionou "postinstall": "prisma generate" ao package.json (exigência Vercel + Prisma)
+- Criou .env.example (DATABASE_URL local + nota sobre /tmp efêmero no Vercel)
+- Criou README.md: o que é, arquitetura (diagrama), rodando local, deploy Vercel passo a passo, por que GitHub Pages não serve a API (modo zero-backend explicado), referência da API com curl, app ntfy/PWA, créditos da skill
+- Commitado tudo em main ("Fim! pronto para deploy"); repo sem remote — usuário precisa criar o repo no GitHub e push
+
+Stage Summary:
+- Projeto 100% pronto para Vercel: build passa, postinstall ok, README com instruções
+- Recomendação dada: Vercel (roda a API); GitHub Pages só faria sentido na variante estática zero-backend (oferecida como follow-up)
+- Opinião sobre theskill entregue ao usuário: aplicada na sessão anterior (polimento UI + bug real de dedupe corrigido)
