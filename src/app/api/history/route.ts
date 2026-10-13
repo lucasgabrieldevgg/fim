@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { ensureSchema } from "@/lib/db-init"
 import { isValidCode } from "@/lib/fim-shared"
 
 export async function GET(req: NextRequest) {
@@ -16,6 +17,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    await ensureSchema()
     const items = await db.notification.findMany({
       where: { code },
       orderBy: { createdAt: "desc" },
@@ -43,6 +45,7 @@ export async function DELETE(req: NextRequest) {
     )
   }
   try {
+    await ensureSchema()
     await db.notification.deleteMany({ where: { code } })
     return NextResponse.json({ ok: true })
   } catch (err) {

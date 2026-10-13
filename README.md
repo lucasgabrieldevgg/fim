@@ -40,10 +40,10 @@ bun run dev        # http://localhost:3000
 
 A Vercel roda a aplicação inteira — API, relay para o ntfy.sh e o painel.
 
-1. Suba o repo para o GitHub:
+1. Suba o repo para o GitHub (já publicado em <https://github.com/lucasgabrieldevgg/fim>):
 
 ```bash
-git remote add origin git@github.com:SEU-USUARIO/fim.git
+git remote add origin https://github.com/lucasgabrieldevgg/fim.git
 git push -u origin main
 ```
 

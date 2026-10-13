@@ -1,0 +1,10 @@
+.env
+.env*.local
+/db
+/download
+/upload
+/dev.log
+/server.log
+/node_modules
+/.next
+/.git

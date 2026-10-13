@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { ensureSchema } from "@/lib/db-init"
 import { isValidCode } from "@/lib/fim-shared"
 
 /** Registra um código (para o painel avisar que o canal existe) e informa se já existia. */
@@ -18,6 +19,7 @@ export async function POST(req: NextRequest) {
     )
   }
   try {
+    await ensureSchema()
     const existing = await db.code.findUnique({ where: { code } })
     if (!existing) {
       await db.code.create({ data: { code } })
@@ -37,6 +39,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Código inválido." }, { status: 400 })
   }
   try {
+    await ensureSchema()
     const existing = await db.code.findUnique({ where: { code } })
     return NextResponse.json({ ok: true, exists: Boolean(existing) })
   } catch {

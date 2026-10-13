@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { ensureSchema } from "@/lib/db-init"
 import { isValidCode, sanitizeText, MAX_TITLE, MAX_MESSAGE } from "@/lib/fim-shared"
 
 // Limite simples por código (por instância do servidor): 30 avisos por minuto.
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
   // 1) Registra o histórico (melhor esforço — não bloqueia o aviso se falhar)
   let saved = false
   try {
+    await ensureSchema()
     await Promise.all([
       db.notification.create({ data: { code, title, message } }),
       db.code.upsert({ where: { code }, update: {}, create: { code } }),
