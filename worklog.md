@@ -127,3 +127,26 @@ Work Log:
 Stage Summary:
 - Site e README direcionam para github.com/lucasgabrieldevgg/fim-android/releases
 - APK público: releases/download/v1.25.2-fim.1/fim.apk
+
+---
+Task ID: 8
+Agent: Super Z (main agent)
+Task: Fim! Android 2.0 — app próprio, enxuto e bonito (substitui fork do ntfy) + avisos de Play Protect em todos os canais
+
+Work Log:
+- Usuário pediu: APK "bonitinho que nem o Fim! web" com só as funções necessárias + avisar que o Play Protect marca APK fora da Play como nocivo (falso positivo) e que dá pra pedir pro agente auditar
+- Decisão: em vez de repintar o ntfy inteiro, escreveu app original do zero — Java puro (sem Kotlin plugin), Views + Material 3, tema dark Fim! (#0A0F0C/#121A15/verde #16A34A, cards 18dp)
+- Estrutura: MainActivity (setup com código + lista de avisos), ListenService (FGS specialUse + wake lock + WebSocket wss://ntfy.sh/<code>/ws com backoff 1s→60s + NetworkCallback), Store (SharedPreferences JSON, cap 100), Bus (singleton listeners), BootReceiver (auto-start), backfill do histórico do painel (GET /api/history, uma vez por código, dedupe título+mensagem)
+- Descoberta chave: o relay do site usa topic = code → app só precisa do código, sem URL de servidor
+- Aviso Play Protect no app: card fixo na tela de setup (falso positivo, instalar mesmo assim, prompt pronto para o agente auditar github.com/lucasgabrieldevgg/fim-app)
+- Build: deps appcompat 1.7/material 1.12/recyclerview/okhttp 4.12; BUILD SUCCESSFUL em 1 chunk; correções: JSONException no setItems, id lista_vazia, URLEncoder API 33+→variante String, imports
+- APK 5,1MB (fork era 9,3MB) assinado com fim.keystore (mesma chave): package gg.lucasgabrieldevgg.fim, versionCode 100, versionName 2.0.0 → instala por cima da 1.x
+- GitHub: repo lucasgabrieldevgg/fim-app (MIT, README com seção Play Protect + prompt de auditoria); Release v2.0.0 com fim.apk (download verificado HTTP 200)
+- Site: how-it-works.tsx atualizado (app Fim! 2.0 como caminho principal, aviso amber do Play Protect, ntfy oficial como alternativa); README.md do repo fim idem; build OK; push main; redeploy Vercel --prod OK (strings confirmadas no chunk servido)
+- Release antiga do fork (v1.25.2-fim.1) recebeu nota no topo: aponta pra 2.0 + aviso Play Protect
+
+Stage Summary:
+- APK novo: https://github.com/lucasgabrieldevgg/fim-app/releases/download/v2.0.0/fim.apk (5,1MB, assinado, minSdk 26)
+- Código: github.com/lucasgabrieldevgg/fim-app (MIT) · Site e README do fim apontando pra ele
+- Fork fim-android preservado com créditos (vira "opção para quem quer o ntfy completo")
+- Keystore/senha inalterados (mesma assinatura); usuário segue devendo rotação dos 2 tokens
