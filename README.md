@@ -78,7 +78,8 @@ Rate limit: 30 avisos por minuto por código. Resposta: `{ok, saved, relayed, wa
 
 ## Instalar no celular
 
-- **App ntfy** (recomendado): Play Store, F-Droid ou APK do [repositório ntfy](https://github.com/binwiederhier/ntfy/releases) — inscreva-se no tópico do seu código e receba o push.
+- **Fim! Android (APK próprio)**: baixe em [GitHub Releases](https://github.com/lucasgabrieldevgg/fim-android/releases/latest) — fork do app ntfy (Apache 2.0), com nossa marca e push em segundo plano sem Google services. Código-fonte: [lucasgabrieldevgg/fim-android](https://github.com/lucasgabrieldevgg/fim-android).
+- **App ntfy oficial** (alternativa): Play Store, F-Droid ou APK do [repositório ntfy](https://github.com/binwiederhier/ntfy-android/releases) — inscreva-se no tópico do seu código e receba o push.
 - **PWA**: abra o painel no navegador do celular e use "Adicionar à tela inicial".
 
 ## Stack

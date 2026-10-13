@@ -108,64 +108,78 @@ export function HowItWorks({ navigate }: { navigate: (to: string) => void }) {
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <Smartphone className="size-5 text-emerald-400" />
-            Receber no celular (o jeito mais simples de ter um &quot;APK&quot;)
+            Receber no celular (APK do Fim!)
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-zinc-400">
           <p>
-            O transporte das notificações é o projeto open-source{" "}
-            <a
-              href="https://ntfy.sh"
-              target="_blank"
-              rel="noreferrer"
-              className="text-emerald-400 underline underline-offset-2"
-            >
-              ntfy.sh
-            </a>
-            , que já tem aplicativo oficial Android: de graça, sem anúncios e sem
-            cadastro. É o caminho mais direto para receber os avisos no bolso:
+            O Fim! tem app Android próprio: um fork nosso do app oficial do ntfy
+            (Apache 2.0, créditos mantidos no repositório). Mesmo motor de push, mesma
+            simplicidade, com a nossa marca:
           </p>
           <ol className="list-decimal space-y-1.5 pl-5">
             <li>
-              Instale o app ntfy:{" "}
+              Baixe o APK:{" "}
               <a
-                href="https://play.google.com/store/apps/details?id=io.heckel.ntfy"
+                href="https://github.com/lucasgabrieldevgg/fim-android/releases/latest"
                 target="_blank"
                 rel="noreferrer"
                 className="text-emerald-400 underline underline-offset-2"
               >
-                Google Play
+                Fim! Android (GitHub Releases)
               </a>
-              ,{" "}
+              . O código-fonte do fork é público:{" "}
               <a
-                href="https://f-droid.org/packages/io.heckel.ntfy/"
+                href="https://github.com/lucasgabrieldevgg/fim-android"
                 target="_blank"
                 rel="noreferrer"
                 className="text-emerald-400 underline underline-offset-2"
               >
-                F-Droid
-              </a>{" "}
-              ou o{" "}
-              <a
-                href="https://github.com/binwiederhier/ntfy-android/releases"
-                target="_blank"
-                rel="noreferrer"
-                className="text-emerald-400 underline underline-offset-2"
-              >
-                APK direto do GitHub
+                lucasgabrieldevgg/fim-android
               </a>
               .
             </li>
             <li>
-              No app, toque em <span className="text-zinc-200">Inscrever-se</span> e
-              digite o seu código do Fim! (ex.:{" "}
+              Instale (o Android pede permissão para apps desconhecidos — normal fora da
+              Play), toque em <span className="text-zinc-200">Inscrever-se</span> e digite
+              o seu código do Fim! (ex.:{" "}
               <code className="font-mono text-emerald-400">fim-x7k92mq8ab</code>).
             </li>
             <li>
               Pronto: cada aviso que a IA enviar aparece como push no seu celular, com o
-              título que ela escolheu.
+              título que ela escolheu — mesmo com o app fechado.
             </li>
           </ol>
+          <p>
+            Prefere o app ntfy original? Funciona igual:{" "}
+            <a
+              href="https://play.google.com/store/apps/details?id=io.heckel.ntfy"
+              target="_blank"
+              rel="noreferrer"
+              className="text-emerald-400 underline underline-offset-2"
+            >
+              Google Play
+            </a>
+            ,{" "}
+            <a
+              href="https://f-droid.org/packages/io.heckel.ntfy/"
+              target="_blank"
+              rel="noreferrer"
+              className="text-emerald-400 underline underline-offset-2"
+            >
+              F-Droid
+            </a>{" "}
+            ou{" "}
+            <a
+              href="https://github.com/binwiederhier/ntfy-android/releases"
+              target="_blank"
+              rel="noreferrer"
+              className="text-emerald-400 underline underline-offset-2"
+            >
+              APK direto do GitHub
+            </a>{" "}
+            — inscreva-se no mesmo código.
+          </p>
         </CardContent>
       </Card>
 
@@ -257,7 +271,20 @@ export function HowItWorks({ navigate }: { navigate: (to: string) => void }) {
         </CardHeader>
         <CardContent className="text-sm text-zinc-400">
           <p>
-            Como o painel é um PWA, você pode empacotá-lo como APK usando o{" "}
+            Este projeto já tem um: o{" "}
+            <a
+              href="https://github.com/lucasgabrieldevgg/fim-android"
+              target="_blank"
+              rel="noreferrer"
+              className="text-emerald-400 underline underline-offset-2"
+            >
+              Fim! Android
+            </a>{" "}
+            é um fork do app ntfy (Apache 2.0) com rebrand, build e APK próprios — o
+            processo está documentado no repositório. Para uma versão com a sua marca, o
+            mesmo caminho funciona: fork, troca de nome/ícones e{" "}
+            <code className="font-mono text-zinc-300">./gradlew assembleFdroidRelease</code>.
+            Outra opção é empacotar o painel PWA com o{" "}
             <a
               href="https://github.com/GoogleChromeLabs/bubblewrap"
               target="_blank"
@@ -266,10 +293,8 @@ export function HowItWorks({ navigate }: { navigate: (to: string) => void }) {
             >
               Bubblewrap
             </a>{" "}
-            (ferramenta oficial do Chrome, que gera um Trusted Web Activity) ou serviços
-            como o PWABuilder. Em poucos minutos você tem um .apk instalável que abre o
-            seu painel em tela cheia. Para a maioria dos casos, o app ntfy + PWA já
-            cobre tudo sem precisar compilar nada.
+            (Trusted Web Activity) ou o PWABuilder — mais rápido, porém sem push com o
+            app fechado.
           </p>
         </CardContent>
       </Card>
