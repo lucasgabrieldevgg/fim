@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { CODE_REGEX, generateCode, isValidCode } from "@/lib/fim-shared"
+import { CopyButton } from "./copy-button"
 
 const CODES_KEY = "fim-codes"
 
@@ -131,6 +132,13 @@ export function Landing({ navigate }: { navigate: (to: string) => void }) {
               <Button variant="outline" onClick={gen} className="h-11 flex-1 border-zinc-700 sm:flex-none">
                 Gerar código
               </Button>
+              {code.trim() && (
+                <CopyButton
+                  text={code.trim()}
+                  variant="outline"
+                  className="h-11 flex-1 border-zinc-700 bg-zinc-950 sm:flex-none"
+                />
+              )}
               <Button
                 onClick={() => openPanel(code.trim())}
                 className="h-11 flex-1 bg-emerald-600 hover:bg-emerald-500 sm:flex-none"

@@ -161,10 +161,11 @@ export function HowItWorks({ navigate }: { navigate: (to: string) => void }) {
               antes de instalar.
             </li>
             <li>
-              Cole o seu código do Fim! (ex.:{" "}
-              <code className="font-mono text-emerald-400">fim-x7k92mq8ab</code>) e toque
-              em <span className="text-zinc-200">Começar a escutar</span>. Cada aviso que
-              a IA enviar chega como push no celular, com o título que ela escolheu.
+              Abra o app: toque em{" "}
+              <span className="text-zinc-200">Criar um código agora</span> (o próprio app
+              gera, copia e guarda) ou cole um código que você já tem, e toque em{" "}
+              <span className="text-zinc-200">Começar a escutar</span>. Cada aviso que a
+              IA enviar chega como push no celular, com o título que ela escolheu.
             </li>
           </ol>
           <p>
