@@ -42,3 +42,17 @@ Stage Summary:
 - Projeto 100% pronto para Vercel: build passa, postinstall ok, README com instruções
 - Recomendação dada: Vercel (roda a API); GitHub Pages só faria sentido na variante estática zero-backend (oferecida como follow-up)
 - Opinião sobre theskill entregue ao usuário: aplicada na sessão anterior (polimento UI + bug real de dedupe corrigido)
+
+---
+Task ID: 3
+Agent: Super Z (main agent)
+Task: Verificar atualização do repo theskill informada pelo usuário
+
+Work Log:
+- git pull no clone de /tmp/theskill: 1 commit novo (df80585)
+- Mudança: nova referência skills/craftsmanship/references/design-sources.md (82 linhas) — catálogo com licenças de fontes de código copiável (Magic UI, Aceternity, HyperUI...), geradores (shadows, typescale...), galerias look-only (Mobbin, Awwwards...) + disciplina de 5 regras para copiar código
+- Atualizações de apoio: SKILL.md do craftsmanship (nota "load on demand" + rota nova), README, ATTRIBUTION, export mdc, evals (+1 caso)
+
+Stage Summary:
+- Nada a mudar no Fim!: o app já passou pelo gate do craftsmanship; a nova referência é catálogo de fontes para tarefas futuras ("ache componentes que posso copiar")
+- Opinião entregue: adição responsável (licenças datadas, "pointers not merges", teto de 5 links, provenance obrigatória)
